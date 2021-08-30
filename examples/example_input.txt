@@ -1,0 +1,100 @@
+section .text
+_start: subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+label:  subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+label:  subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        subleq 1 2 3
+        halt
+
+.data
+nnn 5
+zzz 0
+ooo 1
+nnn 5
+zzz 0
+ooo 1
+mmm 9
