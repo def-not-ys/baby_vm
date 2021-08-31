@@ -7,6 +7,12 @@ typedef enum
     TRUE
 } bool;
 
+typedef enum
+{
+    ERR_NONE,
+    ERR_ATTN
+} ErrorStatus;
+
 typedef struct
 {
     char** list;

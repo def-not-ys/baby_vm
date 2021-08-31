@@ -13,4 +13,4 @@ baby_vm: $(OBJ)
 .PHONY: clean
 
 clean:
-	rm -f *.o *~ core $(INCDIR)/*~
+	rm -f *.o *~ core $(INCDIR)/*~ baby_vm
