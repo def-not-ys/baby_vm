@@ -1,7 +1,7 @@
 #include "types_private.h"
 
-// memory model 
+// memory model
 
-// hardware model 
+// hardware model
 
-// process model 
+// process model
