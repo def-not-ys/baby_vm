@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <string.h>
 #include "baby_vm.h"
 
 #define MAX_BUFFER_LEN              250
@@ -7,14 +5,13 @@
 #define LOG(msg)                    ( printf("%s\n", msg) )
 #define LOG_COMP(expected, actual)  ( printf("expected: %d, actual %d\n", (expected), (actual)) )
 
-#define MIN(x, y)                   ( x < y? x : y)
-#define MAX(x, y)                   ( x > y? x : y)
+#define MIN(x, y)                   ( x < y ? x : y)
+#define MAX(x, y)                   ( x > y ? x : y)
 
 #define DEBUG_ON                    1
 
-static char* fake_path = "examples/example_input.txt";
+static char* fake_path = "examples/test.txt";
 static char* fake_args = "fake args";
-
 
 void wait_for_data(char** ptr_buf, Arguments* ptr_arg)
 {
@@ -27,11 +24,22 @@ void wait_for_data(char** ptr_buf, Arguments* ptr_arg)
     ptr_arg->len = 1;
 }
 
-ErrorStatus load_instructions(char** prt_buf, Arguments* ptr_arg)
+ErrorStatus load_instructions(char** ptr_buf, Arguments* ptr_arg)
 {
-    // @TODO: loads instructions from file into memory
-    // stub
-    return ERR_NONE;
+    ErrorStatus status = ERR_ATTN;
+
+    assert(*ptr_buf != NULL);
+
+    // open file
+    FILE* ptr_file = fopen(*ptr_buf, "r");
+
+    if (ptr_file!=NULL)
+    {
+        // pass fd to memory to read instructions into memory
+        status = memory_load_instructions(ptr_file, ptr_arg);
+        fclose (ptr_file);
+    }
+    return status;
 }
 
 ErrorStatus process_instructions()
