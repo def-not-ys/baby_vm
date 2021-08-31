@@ -14,4 +14,4 @@ $(OBJS): $(DEPS) $(SRCS)
 .PHONY: clean
 
 clean:
-	rm -f $(DIR)/*.gch *.o baby_vm
+	rm -f *.o baby_vm
