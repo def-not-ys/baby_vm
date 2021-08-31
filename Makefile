@@ -1,16 +1,17 @@
 CC=clang
-CFLAGS=-g -I.$(DIR)
+CFLAGS=-I$(DIR) -g
 DIR=./src
-# DEPS = memory.c hardware.c util.c
-OBJ = baby_vm.o
+SRCS=$(DIR)/*.c
+DEPS=$(DIR)/*.h
+OBJS=*.o
 
-%.o: $(DIR)/%.c #$(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+baby_vm: $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
 
-baby_vm: $(OBJ)
-	$(CC) -o $@ $^ $(CFLAGS)
+$(OBJS): $(DEPS) $(SRCS)
+	$(CC) $(CFLAGS) -c $(SRCS)
 
 .PHONY: clean
 
 clean:
-	rm -f *.o *~ core $(INCDIR)/*~ baby_vm
+	rm -f $(DIR)/*.gch *.o baby_vm
