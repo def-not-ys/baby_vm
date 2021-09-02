@@ -11,7 +11,7 @@
 // memory model
 /* 65535 (2^16) locations
     0xffff   +----------+
-             | Reserved |
+             | Reserved |   512 * 2 bytes
     0xfeff   +----------+
              |          |
              |  Stack   |
