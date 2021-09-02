@@ -1,4 +1,5 @@
 #include "baby_vm.h"
+#include "util/hashmap.c"
 
 #define TEXT_REGION_START   0x0000
 #define TEXT_REGION_LAST    0x0fff // @TODO: revisit this!
@@ -9,7 +10,7 @@
 #define HEAP_REGION_START   0x1400
 
 // memory model
-/* 65535 (2^16) locations
+/* 65535 (2^16) bytes
     0xffff   +----------+
              | Reserved |   1024 bytes
     0xfbff   +----------+
