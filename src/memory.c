@@ -5,14 +5,14 @@
 #define DATA_REGION_START   0x1000
 #define DATA_REGION_LAST    0x13ff
 
-#define STACK_REGION_START  0xfeff
+#define STACK_REGION_START  0xfbff
 #define HEAP_REGION_START   0x1400
 
 // memory model
 /* 65535 (2^16) locations
     0xffff   +----------+
-             | Reserved |   512 * 2 bytes
-    0xfeff   +----------+
+             | Reserved |   1024 bytes
+    0xfbff   +----------+
              |          |
              |  Stack   |
              |          |

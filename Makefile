@@ -11,7 +11,10 @@ baby_vm: $(OBJS)
 $(OBJS): $(DEPS) $(SRCS)
 	$(CC) $(CFLAGS) -c $(SRCS)
 
+hashmap: util/hashmap.c
+	$(CC) $(CFLAG) -o $@ $^
+
 .PHONY: clean
 
 clean:
-	rm -f *.o baby_vm
+	rm -f *.o baby_vm hashmap
