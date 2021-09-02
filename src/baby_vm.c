@@ -1,15 +1,5 @@
 #include "baby_vm.h"
 
-#define MAX_BUFFER_LEN              250
-
-#define LOG(msg)                    ( printf("%s\n", msg) )
-#define LOG_COMP(expected, actual)  ( printf("expected: %d, actual %d\n", (expected), (actual)) )
-
-#define MIN(x, y)                   ( x < y ? x : y)
-#define MAX(x, y)                   ( x > y ? x : y)
-
-#define DEBUG_ON                    1
-
 static char* fake_path = "examples/test.txt";
 static char* fake_args = "fake args";
 
@@ -44,15 +34,34 @@ ErrorStatus load_instructions(char** ptr_buf, Arguments* ptr_arg)
 
 ErrorStatus process_instructions()
 {
-    // @TODO: process labels in the instructions
+    // @TODO: process sections and labels in the instructions
     // stub
-    return ERR_NONE;
+    ErrorStatus status = ERR_ATTN;
+    status = memory_process_instructions();
+    return status;
 }
 
 ErrorStatus run_instructions()
 {
     // @TODO: runs the instructions
     // stub
+    /*
+        FETCH - fetch the next instruction from memory
+        (DECODE)
+        EXECUTE - execute the instruction
+        (WRITE BACK)
+
+        bool is_halt = FALSE;
+        pc = 0x0000;
+        do
+        {
+            instruction = memory_get_next_instruction(&pc);
+            hardware_execute_instruction(&pc, &is_halt);
+            increment pc;
+        }
+        while (not is_halt)
+
+    */
     return ERR_NONE;
 }
 
@@ -61,7 +70,6 @@ int main(int argc, char* argv[])
 {
     char* buffer = NULL;
     Arguments args = {0};
-    bool is_running = TRUE;
 
     /*
      *  baby_vm should take (at least?) one argument:

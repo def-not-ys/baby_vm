@@ -7,3 +7,7 @@
         if (Mem[b] ≤ 0)
             goto c
 */
+
+
+// process instruction
+

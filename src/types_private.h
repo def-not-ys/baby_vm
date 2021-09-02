@@ -1,5 +1,4 @@
 #include <stdint.h>
-// #define UINT16_MAX 0xffff
 
 typedef enum
 {
@@ -21,8 +20,8 @@ typedef struct
 
 enum opcodes
 {
-    OP_SUBLEQ = 0,
-    OP_LAST
+    OP_HALT   = 0x0000,
+    OP_SUBLEQ = 0x4000
 };
 
 enum condition_flag
