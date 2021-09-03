@@ -15,9 +15,11 @@
 #define DEBUG_ON                    1
 
 // memory model
+ErrorStatus memory_init(void);
 ErrorStatus memory_load_instructions(FILE* ptr_file, Arguments* ptr_arg);
 ErrorStatus memory_process_instructions(void);
 
 // hardware model
+ErrorStatus hardware_init();
 
 // process model

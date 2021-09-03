@@ -14,6 +14,14 @@ void wait_for_data(char** ptr_buf, Arguments* ptr_arg)
     ptr_arg->len = 1;
 }
 
+ErrorStatus baby_vm_init()
+{
+    ErrorStatus status = ERR_ATTN;
+    status = memory_init();
+    status |= hardware_init();
+    return status;
+}
+
 ErrorStatus load_instructions(char** ptr_buf, Arguments* ptr_arg)
 {
     ErrorStatus status = ERR_ATTN;
@@ -108,6 +116,11 @@ int main(int argc, char* argv[])
 
     // @TODO: to be implemented
     ErrorStatus status = ERR_NONE;
+    status = baby_vm_init();
+    if (ERR_NONE != status)
+    {
+        LOG("failed to initialize baby vm.");
+    }
     status = load_instructions(&buffer, &args);
     if (ERR_NONE != status)
     {
