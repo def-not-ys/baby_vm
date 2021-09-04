@@ -14,6 +14,12 @@ ErrorStatus hardware_init()
     return ERR_NONE;
 }
 
+void hardware_shutdown()
+{
+    // stub
+    return;
+}
+
 
 // process instruction
 

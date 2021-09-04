@@ -12,7 +12,7 @@
 #define SLOT_DELETED        IDX_LAST                                    // use last index as marker for deleted slot
 #define PRIME_TABLE_SIZE    25
 
-#define DEBUG_MODE          0
+#define DEBUG_MODE          1
 
 /* prime numbers from 1 - 100 */
 static const uint16_t _PRIME_TABLE[PRIME_TABLE_SIZE] =
@@ -36,10 +36,9 @@ typedef struct _hashmap
     uint16_t        (*find)(struct _hashmap* self, const char* label);
     HashmapStatus   (*insert)(struct _hashmap* self, const char* label, uint16_t addr);
     uint16_t        (*delete)(struct _hashmap* self, const char* label);
+    void            (*clear)(struct _hashmap* self);
     Data*           _data;
 } Hashmap;
-
-// static Data _hashmap[HASH_TABLE_SIZE] = {};
 
 /*
  * return hash table index from label.
@@ -188,6 +187,8 @@ static uint16_t _delete(Hashmap* self, const char* label)
             {
                 // found
                 printf("deleting { label: %s:\taddr: 0x%x }\n", label, self->_data[try].addr);
+                const char* tmp = self->_data[try].label;
+                free((void*)tmp);
                 addr = self->_data[try].addr;
                 self->_data[try].label = NULL;
                 self->_data[try].addr = SLOT_DELETED;
@@ -208,6 +209,19 @@ static uint16_t _delete(Hashmap* self, const char* label)
     while (try != index);
 
     return addr;
+}
+
+static void _clear(Hashmap* self)
+{
+    assert(self != NULL && "invalid hashmap");
+    for (int i = 0; i < HASH_TABLE_SIZE; i++)
+    {
+        if (NULL != self->_data[i].label)
+        {
+            free((void*)self->_data[i].label);
+            self->_data[i].label = NULL;
+        }
+    }
 }
 
 void _print_hashmap(Hashmap* self)
@@ -234,6 +248,7 @@ void hashmap_init(Hashmap* self, const Memory* ptr_memory)
     self->find = &_find;
     self->insert = &_insert;
     self->delete = &_delete;
+    self->clear = &_clear;
     self->_data = ptr_memory->reserved;
 }
 
@@ -241,58 +256,57 @@ void hashmap_init(Hashmap* self, const Memory* ptr_memory)
 void hashmap_test(Hashmap* self)
 {
 
-    char* labels[18] =
-    {
-        "123456",
-        "data",
-        "start",
-        "main",
-        "loop",
-        "end",
-        "swap",
-        "a",
-        "b",
-        "c",
-        "x",
-        "y",
-        "z",
-        "strange_var_name",
-        "stranger_variable_name",
-        "aabbcc",
-        "abcabc",
-        "ccbbaa"
-    };
+    // char* labels[18] =
+    // {
+    //     "123456",
+    //     "data",
+    //     "start",
+    //     "main",
+    //     "loop",
+    //     "end",
+    //     "swap",
+    //     "a",
+    //     "b",
+    //     "c",
+    //     "x",
+    //     "y",
+    //     "z",
+    //     "strange_var_name",
+    //     "stranger_variable_name",
+    //     "aabbcc",
+    //     "abcabc",
+    //     "ccbbaa"
+    // };
 
-    for (int i = 1; i < 18; i++)
-    {
-        self->insert(self, labels[i], (uint16_t)i);
-        printf("inserting... %s 0x%x \n", labels[i], i);
-    }
+    // for (int i = 1; i < 18; i++)
+    // {
+    //     self->insert(self, labels[i], (uint16_t)i);
+    // }
 
     printf("\n\n");
 
     _print_hashmap(self);
 
-    printf("\n\n");
-    self->find(self, "main");
-    self->find(self, "ainm");
+    // printf("\n\n");
+    // self->find(self, "main");
+    // self->find(self, "ainm");
 
-    printf("\n\n");
-    self->delete(self, "main");
-    self->delete(self, "ainm");
-    self->delete(self, "a");
-    self->delete(self, "b");
-    self->delete(self, "c");
+    // printf("\n\n");
+    // self->delete(self, "main");
+    // self->delete(self, "ainm");
+    // self->delete(self, "a");
+    // self->delete(self, "b");
+    // self->delete(self, "c");
 
-    self->insert(self, "main", 0xff);
+    // self->insert(self, "main", 0xff);
 
-    printf("\n\n");
-    _print_hashmap(self);
+    // printf("\n\n");
+    // _print_hashmap(self);
 
-    printf("\n\n");
-    printf("sizeof Hashmap = %lu\n", sizeof(Hashmap));
-    int table_size = HASH_TABLE_SIZE;
-    printf("sizeof table = %d\n", table_size);
+    // printf("\n\n");
+    // printf("sizeof Hashmap = %lu\n", sizeof(Hashmap));
+    // int table_size = HASH_TABLE_SIZE;
+    // printf("sizeof table = %d\n", table_size);
 
 }
 #endif // DEBUG_MODE
