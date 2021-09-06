@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <errno.h>
 
 #include "memory.h"
 #include "types_private.h"
@@ -26,7 +27,7 @@ static void _examine_memory()
 }
 
 /*
- * check if a token is label (ends with ':')
+ * checks if a token is label (ends with ':')
  */
 static bool _is_label(char* token)
 {
@@ -40,12 +41,43 @@ static bool _is_label(char* token)
 }
 
 /*
- * retrive token value in text and return the int value
+ * retrives token value in text and return the int value
  */
 static uint16_t _get_token_value(char* token)
 {
-    // @TODO: retrive token value in text and return the int value
-    return 99;
+    assert(NULL != token);
+    char* endptr = NULL;
+    errno = 0;    /* To distinguish success/failure after call */
+    int value = strtol(token, &endptr, 10);
+
+    /* Check for various possible errors. */
+
+    if (errno != 0)
+    {
+        perror("strtol");
+        assert(0 && "error in getting token value");
+    }
+
+    if (endptr == token)
+    {
+        fprintf(stderr, "No digits were found\n");
+        assert(0 && "invalid token value");
+    }
+
+    /* If we got here, strtol() successfully parsed a number. */
+#if DEBUG_ON
+    printf("strtol() returned %d\n", value);
+#endif // DEBUG_ON
+
+    if (*endptr != '\0')
+    {
+#if DEBUG_ON
+        printf("Further characters after number: \"%s\"\n", endptr);
+#endif // DEBUG_ON
+        assert(0 && "invalid token value");
+    }
+
+    return value;
 }
 
 /*
@@ -55,11 +87,14 @@ static HashmapStatus _process_label(char* token, int pos, int lower_bound, int u
 {
     HashmapStatus _status = STATUS_OK;
     char* str = strtok(token, ":");
+
     assert(NULL != str && "invalid label");
     assert(pos >= lower_bound && pos < upper_bound && "region overflow");
+
     char* label = (char*)malloc(sizeof(char) * (strlen(str) + 1));
     label = strcpy(label, str);
     _status = hashmap.insert(&hashmap, label, pos);
+
     return _status;
 }
 
@@ -72,7 +107,9 @@ static ErrorStatus _token_handler(char* token, Section* section)
     HashmapStatus _status = STATUS_OK;
     static int is_arg = 0;
 
+#if DEBUG_ON
     printf("handling token [ %s ]\n", token);
+#endif // DEBUG_ON
 
     switch (*section)
     {

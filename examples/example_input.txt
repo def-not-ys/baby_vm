@@ -48,7 +48,7 @@ _start: subleq 1 2 3
         subleq 1 2 3
         subleq 1 2 3
         subleq 1 2 3
-label:  subleq 1 2 3
+label1:  subleq 1 2 3
         subleq 1 2 3
         subleq 1 2 3
         subleq 1 2 3
@@ -68,7 +68,7 @@ label:  subleq 1 2 3
         subleq 1 2 3
         subleq 1 2 3
         subleq 1 2 3
-label:  subleq 1 2 3
+label2:  subleq 1 2 3
         subleq 1 2 3
         subleq 1 2 3
         subleq 1 2 3
@@ -88,13 +88,13 @@ label:  subleq 1 2 3
         subleq 1 2 3
         subleq 1 2 3
         subleq 1 2 3
-        halt
+        # halt
 
-.data
-nnn 5
-zzz 0
-ooo 1
-nnn 5
-zzz 0
-ooo 1
-mmm 9
+section .data
+nnn:    5
+        5
+zzz:    6
+        6
+ooo:    1
+        1
+mmm:    9

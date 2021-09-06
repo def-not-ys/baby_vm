@@ -59,7 +59,9 @@ static HashmapStatus _insert(Hashmap* self, const char* label, uint16_t addr)
         if (SLOT_UNUSED != self->_data[try].addr && SLOT_DELETED != self->_data[try].addr)
         {
             // collision handling - open addressing (try next slot)
+#if DEBUG_MODE
             printf("collision for { %s\t0x%x } at [%d] \n", label, addr, try);
+#endif // DEBUG_MODE
             try = (try + 1) % HASH_TABLE_SIZE;
             continue;
         }
@@ -227,58 +229,9 @@ void hashmap_init(Hashmap* self, const Memory* ptr_memory)
 #if DEBUG_MODE
 void hashmap_test(Hashmap* self)
 {
-
-    // char* labels[18] =
-    // {
-    //     "123456",
-    //     "data",
-    //     "start",
-    //     "main",
-    //     "loop",
-    //     "end",
-    //     "swap",
-    //     "a",
-    //     "b",
-    //     "c",
-    //     "x",
-    //     "y",
-    //     "z",
-    //     "strange_var_name",
-    //     "stranger_variable_name",
-    //     "aabbcc",
-    //     "abcabc",
-    //     "ccbbaa"
-    // };
-
-    // for (int i = 1; i < 18; i++)
-    // {
-    //     self->insert(self, labels[i], (uint16_t)i);
-    // }
-
+    /* for testing hashmap */
     printf("\n\n");
-
     _print_hashmap(self);
-
-    // printf("\n\n");
-    // self->find(self, "main");
-    // self->find(self, "ainm");
-
-    // printf("\n\n");
-    // self->delete(self, "main");
-    // self->delete(self, "ainm");
-    // self->delete(self, "a");
-    // self->delete(self, "b");
-    // self->delete(self, "c");
-
-    // self->insert(self, "main", 0xff);
-
-    // printf("\n\n");
-    // _print_hashmap(self);
-
-    // printf("\n\n");
-    // printf("sizeof Hashmap = %lu\n", sizeof(Hashmap));
-    // int table_size = HASH_TABLE_SIZE;
-    // printf("sizeof table = %d\n", table_size);
-
+    printf("\n\n");
 }
 #endif // DEBUG_MODE
