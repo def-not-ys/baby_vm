@@ -1,7 +1,7 @@
 CC=clang
 CFLAGS=-I$(DIR) -g
 DIR=./src
-SRCS=$(DIR)/*.c
+SRCS=$(DIR)/baby_vm.c $(DIR)/memory.c $(DIR)/hardware.c
 DEPS=$(DIR)/*.h
 OBJS=*.o
 

@@ -1,3 +1,6 @@
+#ifndef _TYPES_H
+#define _TYPES_H
+
 #include <stdint.h>
 
 /*  general */
@@ -59,3 +62,6 @@ enum condition_flag
 };
 
 /*  processor model */
+
+
+#endif // _TYPES_H
