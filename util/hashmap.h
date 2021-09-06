@@ -16,7 +16,7 @@
 #define SLOT_UNUSED         0x0000
 #define SLOT_DELETED        IDX_LAST                                    // use last index as marker for deleted slot
 
-#define DEBUG_MODE          1
+#define DEBUG_MODE          0
 
 typedef enum
 {

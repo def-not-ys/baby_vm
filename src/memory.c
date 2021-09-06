@@ -41,22 +41,19 @@ ErrorStatus memory_get_instruction(uint16_t* pc, Instruction* buf)
 }
 
 /*
-    split line by space token
-    process line token array:
-    {
-        for each token:
-            token handler()
-    }
+    split line by space token and process token
 */
 static ErrorStatus _memory_process_line(char* line, Section* section)
 {
     ErrorStatus status = ERR_NONE;
-    LOG("processing instructions...");
 
     // process instruction
     char* remaining_line = NULL;
     char* token = strtok_r(line, " ", &remaining_line);
+
+#if DEBUG_ON
     printf("token: [ %s ]\n", token);
+#endif // DEBUG_ON
 
     if (NULL != token)
     {
@@ -66,7 +63,9 @@ static ErrorStatus _memory_process_line(char* line, Section* section)
     while (NULL != token)
     {
         token = strtok_r(NULL, " ", &remaining_line);
+#if DEBUG_ON
         printf("token: [ %s ]\n", token);
+#endif // DEBUG_ON
         if (NULL != token)
         {
             status |= _token_handler(token, section);
@@ -77,7 +76,7 @@ static ErrorStatus _memory_process_line(char* line, Section* section)
 }
 
 /*
-    loading instructions into memory
+    load instructions into memory
 */
 ErrorStatus memory_load_instructions(FILE* ptr_file, Arguments* ptr_arg)
 {
@@ -92,18 +91,21 @@ ErrorStatus memory_load_instructions(FILE* ptr_file, Arguments* ptr_arg)
         // omit comment start with #
         char* line = strtok(buf, "#");
         line = strtok(line, "\r\n");
+#if DEBUG_ON
         printf("after split by #: [ %s ]\n", line);
+#endif // DEBUG_ON
         if (NULL != line)
         {
             status |= _memory_process_line(line, &section);
         }
     }
 
-
-#if DEBUG_MODE
+#if DEBUG_ON
     _examine_memory();
+#if DEBUG_MODE
     hashmap_test(&hashmap);
 #endif // DEBUGMODE
+#endif // DEBUG_ON
 
     return status;
 }
