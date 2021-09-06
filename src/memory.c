@@ -112,6 +112,5 @@ ErrorStatus memory_load_instructions(FILE* ptr_file, Arguments* ptr_arg)
 
 void memory_shutdown()
 {
-    //@TODO: clear hashmap and free related memory
     hashmap.clear(&hashmap);
 }

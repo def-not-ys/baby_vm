@@ -77,9 +77,9 @@ int main(int argc, char* argv[])
     Arguments args = {0};
 
     /*
-     *  baby_vm should take (at least?) one argument:
+     *  baby_vm should take (at least) one argument:
      *  path and name of the assembly.txt file
-     *  arguments supplied to the program to be executed (???)
+     *  arguments supplied to the program to be executed (OPTIONAL)
      */
 
     if (argc < 2)
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
         {
             // for simplicity. do not support dynamically allocate long string
             LOG("argument too long. exceeds maximum argument length. exiting grafaully...");
-            return 0;
+            exit(EXIT_FAILURE);
         }
 
         buffer = argv[1];
@@ -113,23 +113,33 @@ int main(int argc, char* argv[])
 
     // @TODO: to be implemented
     ErrorStatus status = ERR_NONE;
+
     status = baby_vm_init();
     if (ERR_NONE != status)
     {
-        LOG("failed to initialize baby vm.");
+        LOG("failed to initialize baby vm. exiting grafaully...");
+        exit(EXIT_FAILURE);
     }
+
     status = load_instructions(&buffer, &args);
     if (ERR_NONE != status)
     {
-        LOG("failed to load instructions.");
+        LOG("failed to load instructions. exiting grafaully...");
+        baby_vm_shutdown();
+        exit(EXIT_FAILURE);
     }
+
     status = run_instructions();
     if (ERR_NONE != status)
     {
-        LOG("failed to run instructions.");
+        LOG("failed to run instructions. exiting grafaully...");
+        baby_vm_shutdown();
+        exit(EXIT_FAILURE);
     }
 
     baby_vm_shutdown();
 
     LOG("\nshutting down...\n");
+
+    exit(EXIT_SUCCESS);
 }
