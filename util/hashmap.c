@@ -1,18 +1,6 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
+#include "hashmap.h"
 
-#define IDX_BASE            STACK_REGION_START
-#define IDX_LAST            0xffff
-#define SIZE_OF_DATA        8                                           // this will only work with size_t = 4 byte
-#define HASH_TABLE_SIZE     ( ( IDX_LAST - IDX_BASE ) / SIZE_OF_DATA )  // 128 slots
-#define INVALID_INDEX       HASH_TABLE_SIZE                             // use table size as marker for invalid index
-#define SLOT_UNUSED         0x0000
-#define SLOT_DELETED        IDX_LAST                                    // use last index as marker for deleted slot
 #define PRIME_TABLE_SIZE    25
-
-#define DEBUG_MODE          1
 
 /* prime numbers from 1 - 100 */
 static const uint16_t _PRIME_TABLE[PRIME_TABLE_SIZE] =
@@ -23,22 +11,6 @@ static const uint16_t _PRIME_TABLE[PRIME_TABLE_SIZE] =
     53, 59, 61, 67, 71,
     73, 79, 83, 89, 97
 };
-
-typedef enum
-{
-    STATUS_OK,
-    STATUS_ERR,
-    STATUS_FULL
-} HashmapStatus;
-
-typedef struct _hashmap
-{
-    uint16_t        (*find)(struct _hashmap* self, const char* label);
-    HashmapStatus   (*insert)(struct _hashmap* self, const char* label, uint16_t addr);
-    uint16_t        (*delete)(struct _hashmap* self, const char* label);
-    void            (*clear)(struct _hashmap* self);
-    Data*           _data;
-} Hashmap;
 
 /*
  * return hash table index from label.

@@ -5,7 +5,9 @@
 #include <string.h>
 #include <assert.h>
 
+#include "memory.h"
 #include "types_private.h"
+#include "../util/hashmap.h"
 
 extern uint16_t _memory[];
 extern Hashmap hashmap;
@@ -49,7 +51,6 @@ static uint16_t _get_token_value(char* token)
 /*
  * processes labels and saves { label: addr } in hashmap
  */
-
 static HashmapStatus _process_label(char* token, int pos, int lower_bound, int upper_bound)
 {
     HashmapStatus _status = STATUS_OK;

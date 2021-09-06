@@ -1,8 +1,8 @@
 CC=clang
 CFLAGS=-I$(DIR) -g
 DIR=./src
-SRCS=$(DIR)/baby_vm.c $(DIR)/memory.c $(DIR)/hardware.c
-DEPS=$(DIR)/*.h
+SRCS=$(DIR)/baby_vm.c $(DIR)/memory.c $(DIR)/hardware.c util/hashmap.c
+DEPS=$(DIR)/*.h util/*.h
 OBJS=*.o
 
 baby_vm: $(OBJS)
@@ -11,10 +11,7 @@ baby_vm: $(OBJS)
 $(OBJS): $(DEPS) $(SRCS)
 	$(CC) $(CFLAGS) -c $(SRCS)
 
-hashmap: util/hashmap.c
-	$(CC) $(CFLAG) -o $@ $^
-
 .PHONY: clean
 
 clean:
-	rm -f *.o baby_vm hashmap
+	rm -f *.o baby_vm
