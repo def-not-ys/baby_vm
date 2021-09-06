@@ -40,15 +40,6 @@ ErrorStatus load_instructions(char** ptr_buf, Arguments* ptr_arg)
     return status;
 }
 
-// ErrorStatus process_instructions()
-// {
-//     // @TODO: process sections and labels in the instructions
-//     // stub
-//     ErrorStatus status = ERR_ATTN;
-//     status = memory_process_instructions();
-//     return status;
-// }
-
 ErrorStatus run_instructions()
 {
     // @TODO: runs the instructions
@@ -75,7 +66,6 @@ ErrorStatus run_instructions()
 
 void baby_vm_shutdown()
 {
-    // @TODO: shutdown process and free memory
     memory_shutdown();
     hardware_shutdown();
 }
@@ -133,11 +123,6 @@ int main(int argc, char* argv[])
     {
         LOG("failed to load instructions.");
     }
-    // status = process_instructions();
-    // if (ERR_NONE != status)
-    // {
-    //     LOG("failed to process instructions.");
-    // }
     status = run_instructions();
     if (ERR_NONE != status)
     {
@@ -146,5 +131,5 @@ int main(int argc, char* argv[])
 
     baby_vm_shutdown();
 
-    LOG("exiting...");
+    LOG("\nshutting down...\n");
 }

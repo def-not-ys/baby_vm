@@ -155,8 +155,7 @@ static HashmapStatus _process_label(char* token, int pos, int lower_bound, int u
                                 endif
                 default:      error
 */
-
-static ErrorStatus _memory_token_handler(char* token, Section* section)
+static ErrorStatus _token_handler(char* token, Section* section)
 {
     ErrorStatus status = ERR_NONE;
     HashmapStatus _status = STATUS_OK;
@@ -204,7 +203,7 @@ static ErrorStatus _memory_token_handler(char* token, Section* section)
             {
                 uint16_t value = _get_token_value(token);
                 assert(text_pos >= TEXT_REGION_START && text_pos < TEXT_REGION_LAST && "text region overflow");
-                _memory[text_pos] = is_arg;
+                _memory[text_pos] = value;
                 text_pos++;
                 is_arg++;
             }
@@ -272,7 +271,7 @@ static ErrorStatus _memory_process_line(char* line, Section* section)
 
     if (NULL != token)
     {
-        status |= _memory_token_handler(token, section);
+        status |= _token_handler(token, section);
     }
 
     while (NULL != token)
@@ -281,7 +280,7 @@ static ErrorStatus _memory_process_line(char* line, Section* section)
         printf("token: [ %s ]\n", token);
         if (NULL != token)
         {
-            status |= _memory_token_handler(token, section);
+            status |= _token_handler(token, section);
         }
     }
 
@@ -316,9 +315,9 @@ ErrorStatus memory_load_instructions(FILE* ptr_file, Arguments* ptr_arg)
         }
     }
 
-    _examine_memory();
 
 #if DEBUG_MODE
+    _examine_memory();
     hashmap_test(&hashmap);
 #endif // DEBUGMODE
 
