@@ -8,6 +8,18 @@
             goto c
 */
 
+ErrorStatus hardware_init()
+{
+    //stub
+    return ERR_NONE;
+}
+
+void hardware_shutdown()
+{
+    // stub
+    return;
+}
+
 
 // process instruction
 

@@ -1,9 +1,10 @@
 section .text
 _start: subleq 1 2 3
         subleq 1 2 3
-label:  subleq 1 2 3
+label:  
         subleq 1 2 3
-        halt
+        subleq 1 2 3
+        #halt    # this is a test comment
 
 section .data
-        Z 0
+        Z: 0

@@ -1,10 +1,9 @@
-#include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
-#define IDX_BASE            0xfbff
+#define IDX_BASE            STACK_REGION_START
 #define IDX_LAST            0xffff
 #define SIZE_OF_DATA        8                                           // this will only work with size_t = 4 byte
 #define HASH_TABLE_SIZE     ( ( IDX_LAST - IDX_BASE ) / SIZE_OF_DATA )  // 128 slots
@@ -13,7 +12,7 @@
 #define SLOT_DELETED        IDX_LAST                                    // use last index as marker for deleted slot
 #define PRIME_TABLE_SIZE    25
 
-#define DEBUG_MODE         1
+#define DEBUG_MODE          1
 
 /* prime numbers from 1 - 100 */
 static const uint16_t _PRIME_TABLE[PRIME_TABLE_SIZE] =
@@ -25,21 +24,27 @@ static const uint16_t _PRIME_TABLE[PRIME_TABLE_SIZE] =
     73, 79, 83, 89, 97
 };
 
-
-typedef struct
+typedef enum
 {
-    const char*     label;
-    uint16_t        reserved; // for alignment
-    uint16_t        addr;
-} Data;
+    STATUS_OK,
+    STATUS_ERR,
+    STATUS_FULL
+} HashmapStatus;
 
-Data _hashmap[HASH_TABLE_SIZE] = {};
+typedef struct _hashmap
+{
+    uint16_t        (*find)(struct _hashmap* self, const char* label);
+    HashmapStatus   (*insert)(struct _hashmap* self, const char* label, uint16_t addr);
+    uint16_t        (*delete)(struct _hashmap* self, const char* label);
+    void            (*clear)(struct _hashmap* self);
+    Data*           _data;
+} Hashmap;
 
 /*
  * return hash table index from label.
  * if label is NULL, return INVALID_INDEX
  */
-int _hash(const char* label)
+static int _hash(const char* label)
 {
     int index = INVALID_INDEX;
     if (NULL == label)
@@ -58,6 +63,8 @@ int _hash(const char* label)
 
     index %= HASH_TABLE_SIZE;
 
+    assert(index >= 0 && index < INVALID_INDEX && "index out of bound");
+
     return index;
 }
 
@@ -65,19 +72,19 @@ int _hash(const char* label)
  * insert label:addr into hashmap
  * return int error status
  */
-int _insert(const char* label, uint16_t addr)
+static HashmapStatus _insert(Hashmap* self, const char* label, uint16_t addr)
 {
     int index = _hash(label);
     if (INVALID_INDEX == index)
     {
-        return 1; // error
+        return STATUS_ERR; // error
     }
 
     int try = index;
 
     do
     {
-        if (SLOT_UNUSED != _hashmap[try].addr && SLOT_DELETED != _hashmap[try].addr)
+        if (SLOT_UNUSED != self->_data[try].addr && SLOT_DELETED != self->_data[try].addr)
         {
             // collision handling - open addressing (try next slot)
             printf("collision for { %s\t0x%x } at [%d] \n", label, addr, try);
@@ -87,21 +94,21 @@ int _insert(const char* label, uint16_t addr)
         else
         {
             // insert addr in hashmap at index
-            _hashmap[try].label = label;
-            _hashmap[try].addr = addr;
-            return 0; // status ok
+            self->_data[try].label = label;
+            self->_data[try].addr = addr;
+            return STATUS_OK; // status ok
         }
     }
     while(try != index);
 
-    return 2; // error - table full
+    return STATUS_FULL; // error - table full
 }
 
 /*
  * return the address found.
  * if not found, return IDX_LAST
  */
-uint16_t _find(const char* label)
+static uint16_t _find(Hashmap* self, const char* label)
 {
     uint16_t addr = IDX_LAST;
     if (NULL == label)
@@ -116,7 +123,7 @@ uint16_t _find(const char* label)
 
     do
     {
-        if (NULL == _hashmap[try].label || SLOT_UNUSED == _hashmap[try].addr)
+        if (NULL == self->_data[try].label || SLOT_UNUSED == self->_data[try].addr)
         {
             // label does not exist, stop looking
             printf("label %s not found \n", label);
@@ -124,14 +131,14 @@ uint16_t _find(const char* label)
         }
         else
         {
-            not_match = strncmp(_hashmap[try].label, label, strlen(label));
+            not_match = strncmp(self->_data[try].label, label, strlen(label));
             if (0 == not_match)
             {
                 // found
                 printf("found label %s \n", label);
-                return _hashmap[try].addr;
+                return self->_data[try].addr;
             }
-            else if (not_match && SLOT_DELETED == _hashmap[try].addr)
+            else if (not_match && SLOT_DELETED == self->_data[try].addr)
             {
                 // data may exit, continue
                 try = (try + 1) % HASH_TABLE_SIZE;
@@ -153,7 +160,7 @@ uint16_t _find(const char* label)
  * return the deleted addr
  * if label not found, return SLOT_DELETED
  */
-uint16_t _delete(const char* label)
+static uint16_t _delete(Hashmap* self, const char* label)
 {
     uint16_t addr = SLOT_DELETED;
     if (NULL == label)
@@ -167,7 +174,7 @@ uint16_t _delete(const char* label)
 
     do
     {
-        if (NULL == _hashmap[try].label || SLOT_UNUSED == _hashmap[try].addr)
+        if (NULL == self->_data[try].label || SLOT_UNUSED == self->_data[try].addr)
         {
             // label does not exist, stop looking
             printf("label %s not found \n", label);
@@ -175,17 +182,19 @@ uint16_t _delete(const char* label)
         }
         else
         {
-            int not_match = strncmp(_hashmap[try].label, label, strlen(label));
+            int not_match = strncmp(self->_data[try].label, label, strlen(label));
             if (0 == not_match)
             {
                 // found
-                printf("deleting { label: %s:\taddr: 0x%x }\n", label, _hashmap[try].addr);
-                addr = _hashmap[try].addr;
-                _hashmap[try].label = NULL;
-                _hashmap[try].addr = SLOT_DELETED;
+                printf("deleting { label: %s:\taddr: 0x%x }\n", label, self->_data[try].addr);
+                const char* tmp = self->_data[try].label;
+                free((void*)tmp);
+                addr = self->_data[try].addr;
+                self->_data[try].label = NULL;
+                self->_data[try].addr = SLOT_DELETED;
                 break;
             }
-            else if (not_match && SLOT_DELETED == _hashmap[try].addr)
+            else if (not_match && SLOT_DELETED == self->_data[try].addr)
             {
                 // data may exit, continue
                 try = (try + 1) % HASH_TABLE_SIZE;
@@ -202,95 +211,102 @@ uint16_t _delete(const char* label)
     return addr;
 }
 
-void _print_hashmap()
+static void _clear(Hashmap* self)
+{
+    assert(self != NULL && "invalid hashmap");
+    for (int i = 0; i < HASH_TABLE_SIZE; i++)
+    {
+        if (NULL != self->_data[i].label)
+        {
+            free((void*)self->_data[i].label);
+            self->_data[i].label = NULL;
+        }
+    }
+}
+
+void _print_hashmap(Hashmap* self)
 {
     for (uint16_t i = 0; i < HASH_TABLE_SIZE; i++)
     {
-        if (_hashmap[i].addr == SLOT_UNUSED)
+        if (self->_data[i].addr == SLOT_UNUSED)
         {
             printf("hashmap[%d]\t-----\n", i);
         }
-        else if (_hashmap[i].addr == SLOT_DELETED)
+        else if (self->_data[i].addr == SLOT_DELETED)
         {
             printf("hashmap[%d]\tdeleted\n", i);
         }
         else
         {
-            printf("hashmap[%d]\t { label: %s \t addr: 0x%x }\n", i, _hashmap[i].label, _hashmap[i].addr);
+            printf("hashmap[%d]\t { label: %s \t addr: 0x%x }\n", i, self->_data[i].label, self->_data[i].addr);
         }
     }
 }
 
-
-
-/*
-    typedef struct hashmap
-    {
-        void (*init)(const void* self);
-
-        ..
-        hashmap data;
-    } Hashmap;
-*/
-
-#if DEBUG_MODE
-int main()
+void hashmap_init(Hashmap* self, const Memory* ptr_memory)
 {
-
-    char* labels[18] =
-    {
-        "123456",
-        "data",
-        "start",
-        "main",
-        "loop",
-        "end",
-        "swap",
-        "a",
-        "b",
-        "c",
-        "x",
-        "y",
-        "z",
-        "strange_var_name",
-        "stranger_variable_name",
-        "aabbcc",
-        "abcabc",
-        "ccbbaa"
-    };
-
-
-    for (int i = 1; i < 18; i++)
-    {
-        _insert(labels[i], (uint16_t)i);
-        // printf("inserting... %s 0x%x \n", labels[i], i);
-    }
-
-    printf("\n\n");
-
-    _print_hashmap();
-
-    printf("\n\n");
-    _find("main");
-    _find("ainm");
-
-    printf("\n\n");
-    _delete("main");
-    _delete("ainm");
-    _delete("a");
-    _delete("b");
-    _delete("c");
-
-    _insert("main", 0xff);
-
-    printf("\n\n");
-    _print_hashmap();
-
-    printf("\n\n");
-    printf("sizeof Data = %d\n", sizeof(Data));
-    int table_size = HASH_TABLE_SIZE;
-    printf("sizeof table = %d\n", table_size);
-
+    self->find = &_find;
+    self->insert = &_insert;
+    self->delete = &_delete;
+    self->clear = &_clear;
+    self->_data = ptr_memory->reserved;
 }
 
+#if DEBUG_MODE
+void hashmap_test(Hashmap* self)
+{
+
+    // char* labels[18] =
+    // {
+    //     "123456",
+    //     "data",
+    //     "start",
+    //     "main",
+    //     "loop",
+    //     "end",
+    //     "swap",
+    //     "a",
+    //     "b",
+    //     "c",
+    //     "x",
+    //     "y",
+    //     "z",
+    //     "strange_var_name",
+    //     "stranger_variable_name",
+    //     "aabbcc",
+    //     "abcabc",
+    //     "ccbbaa"
+    // };
+
+    // for (int i = 1; i < 18; i++)
+    // {
+    //     self->insert(self, labels[i], (uint16_t)i);
+    // }
+
+    printf("\n\n");
+
+    _print_hashmap(self);
+
+    // printf("\n\n");
+    // self->find(self, "main");
+    // self->find(self, "ainm");
+
+    // printf("\n\n");
+    // self->delete(self, "main");
+    // self->delete(self, "ainm");
+    // self->delete(self, "a");
+    // self->delete(self, "b");
+    // self->delete(self, "c");
+
+    // self->insert(self, "main", 0xff);
+
+    // printf("\n\n");
+    // _print_hashmap(self);
+
+    // printf("\n\n");
+    // printf("sizeof Hashmap = %lu\n", sizeof(Hashmap));
+    // int table_size = HASH_TABLE_SIZE;
+    // printf("sizeof table = %d\n", table_size);
+
+}
 #endif // DEBUG_MODE

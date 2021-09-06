@@ -14,6 +14,14 @@ void wait_for_data(char** ptr_buf, Arguments* ptr_arg)
     ptr_arg->len = 1;
 }
 
+ErrorStatus baby_vm_init()
+{
+    ErrorStatus status = ERR_ATTN;
+    status = memory_init();
+    status |= hardware_init();
+    return status;
+}
+
 ErrorStatus load_instructions(char** ptr_buf, Arguments* ptr_arg)
 {
     ErrorStatus status = ERR_ATTN;
@@ -29,15 +37,6 @@ ErrorStatus load_instructions(char** ptr_buf, Arguments* ptr_arg)
         status = memory_load_instructions(ptr_file, ptr_arg);
         fclose (ptr_file);
     }
-    return status;
-}
-
-ErrorStatus process_instructions()
-{
-    // @TODO: process sections and labels in the instructions
-    // stub
-    ErrorStatus status = ERR_ATTN;
-    status = memory_process_instructions();
     return status;
 }
 
@@ -63,6 +62,12 @@ ErrorStatus run_instructions()
 
     */
     return ERR_NONE;
+}
+
+void baby_vm_shutdown()
+{
+    memory_shutdown();
+    hardware_shutdown();
 }
 
 // process model
@@ -108,15 +113,15 @@ int main(int argc, char* argv[])
 
     // @TODO: to be implemented
     ErrorStatus status = ERR_NONE;
+    status = baby_vm_init();
+    if (ERR_NONE != status)
+    {
+        LOG("failed to initialize baby vm.");
+    }
     status = load_instructions(&buffer, &args);
     if (ERR_NONE != status)
     {
         LOG("failed to load instructions.");
-    }
-    status = process_instructions();
-    if (ERR_NONE != status)
-    {
-        LOG("failed to process instructions.");
     }
     status = run_instructions();
     if (ERR_NONE != status)
@@ -124,5 +129,7 @@ int main(int argc, char* argv[])
         LOG("failed to run instructions.");
     }
 
-    LOG("exiting...");
+    baby_vm_shutdown();
+
+    LOG("\nshutting down...\n");
 }
