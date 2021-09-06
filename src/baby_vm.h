@@ -1,3 +1,6 @@
+#ifndef BABY_VM_H
+#define BABY_VM_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -26,3 +29,5 @@ ErrorStatus hardware_init();
 void hardware_shutdown();
 
 // process model
+
+#endif // BABY_VM_H
