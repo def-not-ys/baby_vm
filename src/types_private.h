@@ -3,6 +3,16 @@
 
 #include <stdint.h>
 
+#define MAX_BUFFER_LEN              250
+
+#define LOG(msg)                    ( printf("%s\n", msg) )
+#define LOG_COMP(expected, actual)  ( printf("expected: %d, actual %d\n", (expected), (actual)) )
+
+#define MIN(x, y)                   ( x < y ? x : y)
+#define MAX(x, y)                   ( x > y ? x : y)
+
+#define DEBUG_ON                    1
+
 /*  general */
 typedef enum
 {

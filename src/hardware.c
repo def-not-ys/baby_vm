@@ -1,4 +1,4 @@
-#include "types_private.h"
+#include "baby_vm.h"
 
 // hardware model
 /*  SUBLEQ implementation
@@ -20,6 +20,9 @@ void hardware_shutdown()
     return;
 }
 
-
 // process instruction
-
+ErrorStatus hardware_execute_instruction(Instruction* pc)
+{
+    // stub
+    return ERR_NONE;
+}

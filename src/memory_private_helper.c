@@ -17,7 +17,7 @@ static void _examine_memory()
 {
     // examine _memory[]
     printf("\n\n");
-    for (int i = 0; i < UINT16_MAX; i++ )
+    for (uint16_t i = 0; i < UINT16_MAX; i++ )
     {
         if (_memory[i] != 0)
         {

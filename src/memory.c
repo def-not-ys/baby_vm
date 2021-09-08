@@ -5,39 +5,63 @@ static uint16_t _memory[UINT16_MAX];
 static int text_pos; // available text region slot
 static int data_pos; // available data region slot
 
-Memory memory = {};
-Hashmap hashmap = {};
-
-uint16_t pc; // program counter
-uint16_t sp; // stack pointer
+static Hashmap hashmap = {};
 
 #include "memory_private_helper.c"
 
-static void _memory_init_private()
+static void _memory_init_private(Memory* memory)
 {
-    memory.reserved  = (Data*)&_memory[STACK_REGION_START];
-    memory.ptr_stack = &_memory[STACK_REGION_START];
-    memory.ptr_heap  = &_memory[HEAP_REGION_START];
-    memory.ptr_data  = &_memory[DATA_REGION_START];
-    memory.ptr_text  = (Instruction*)&_memory[TEXT_REGION_START];
+    memory->reserved  = (Data*)&_memory[STACK_REGION_START];
+    memory->addr_stack = STACK_REGION_START;
+    memory->addr_heap  = HEAP_REGION_START;
+    memory->addr_data  = DATA_REGION_START;
+    memory->ptr_text  = (Instruction*)&_memory[TEXT_REGION_START];
 }
 
-ErrorStatus memory_init()
+ErrorStatus memory_init(Memory* memory)
 {
-    pc = TEXT_REGION_START;
-    sp = STACK_REGION_START;
     text_pos = TEXT_REGION_START;
     data_pos = DATA_REGION_START;
-    _memory_init_private();
-    hashmap_init(&hashmap, &memory);
+    _memory_init_private(memory);
+    hashmap_init(&hashmap, memory);
     return ERR_NONE;
 }
 
-ErrorStatus memory_get_instruction(uint16_t* pc, Instruction* buf)
+/*
+    read mem[addr] to *(p_val) and return the error status
+*/
+ErrorStatus memory_read(uint16_t addr, uint16_t* ptr_val)
 {
-    // @TODO: get instruction at mem[pc] and return the read instruction via buf
-    // stub
-    return ERR_NONE;
+    assert(NULL != ptr_val);
+    if (addr < 0x0000 || addr > UINT16_MAX)
+    {
+        // addr out of bound
+        *ptr_val = 0;
+        return ERR_ATTN;
+    }
+    else
+    {
+        *ptr_val = _memory[addr];
+        return ERR_NONE;
+    }
+}
+
+/*
+    write value to mem[addr] and return the error status
+*/
+ErrorStatus memory_write(uint16_t addr, uint16_t value)
+{
+    if (addr < DATA_REGION_START || addr > STACK_REGION_START)
+    {
+        // read only region or addr out of bound
+        return ERR_ATTN;
+    }
+    else
+    {
+        _memory[addr] = value;
+        return ERR_NONE;
+    }
+
 }
 
 /*

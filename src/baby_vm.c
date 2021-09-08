@@ -17,7 +17,7 @@ void wait_for_data(char** ptr_buf, Arguments* ptr_arg)
 ErrorStatus baby_vm_init()
 {
     ErrorStatus status = ERR_ATTN;
-    status = memory_init();
+    status = memory_init(&memory);
     status |= hardware_init();
     return status;
 }
@@ -61,6 +61,23 @@ ErrorStatus run_instructions()
         while (not is_halt)
 
     */
+
+    ErrorStatus status = ERR_ATTN;
+    // Instruction instruction = {};
+
+    Instruction* pc = NULL;
+
+    /* FETCH */
+    pc = memory.ptr_text; // program counter
+
+    /* DECODE */
+    // done by type inference
+
+    /* EXECUTE */
+    status = hardware_execute_instruction(pc);
+
+
+
     return ERR_NONE;
 }
 
