@@ -28,43 +28,6 @@ ErrorStatus memory_init(Memory* memory)
 }
 
 /*
-    read mem[addr] to *(p_val) and return the error status
-*/
-ErrorStatus memory_read(uint16_t addr, uint16_t* ptr_val)
-{
-    assert(NULL != ptr_val);
-    if (addr < 0x0000 || addr > UINT16_MAX)
-    {
-        // addr out of bound
-        *ptr_val = 0;
-        return ERR_ATTN;
-    }
-    else
-    {
-        *ptr_val = _memory[addr];
-        return ERR_NONE;
-    }
-}
-
-/*
-    write value to mem[addr] and return the error status
-*/
-ErrorStatus memory_write(uint16_t addr, uint16_t value)
-{
-    if (addr < DATA_REGION_START || addr > STACK_REGION_START)
-    {
-        // read only region or addr out of bound
-        return ERR_ATTN;
-    }
-    else
-    {
-        _memory[addr] = value;
-        return ERR_NONE;
-    }
-
-}
-
-/*
     split line by space token and process token
 */
 static ErrorStatus _memory_process_line(char* line, Section* section)
@@ -132,6 +95,43 @@ ErrorStatus memory_load_instructions(FILE* ptr_file, Arguments* ptr_arg)
 #endif // DEBUG_ON
 
     return status;
+}
+
+/*
+    read mem[addr] to *(p_val) and return the error status
+*/
+ErrorStatus memory_read(uint16_t addr, uint16_t* ptr_val)
+{
+    assert(NULL != ptr_val);
+    if (addr < 0x0000 || addr > UINT16_MAX)
+    {
+        // addr out of bound
+        *ptr_val = 0;
+        return ERR_ATTN;
+    }
+    else
+    {
+        *ptr_val = _memory[addr];
+        return ERR_NONE;
+    }
+}
+
+/*
+    write value to mem[addr] and return the error status
+*/
+ErrorStatus memory_write(uint16_t addr, uint16_t value)
+{
+    if (addr < DATA_REGION_START || addr > STACK_REGION_START)
+    {
+        // read only region or addr out of bound
+        return ERR_ATTN;
+    }
+    else
+    {
+        _memory[addr] = value;
+        return ERR_NONE;
+    }
+
 }
 
 void memory_shutdown()

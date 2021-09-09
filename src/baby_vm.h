@@ -13,7 +13,7 @@ Memory memory;
 
 // hardware model
 ErrorStatus hardware_init();
-ErrorStatus hardware_execute_instruction(Instruction* pc);
+ErrorStatus hardware_execute_instruction(Instruction* pc, bool* is_halt);
 void hardware_shutdown();
 
 // process model

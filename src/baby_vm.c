@@ -40,45 +40,44 @@ ErrorStatus load_instructions(char** ptr_buf, Arguments* ptr_arg)
     return status;
 }
 
+/*
+    get the pointer to the current instruction to pc
+    and increment the memory text pointer to point to the next instruction
+*/
+static void _get_instruction(Instruction** pc)
+{
+    *pc = memory.ptr_text++;
+}
+
+
+/*
+    FETCH - fetch the next instruction from memory
+    (DECODE)
+    EXECUTE - execute the instruction
+    (WRITE BACK)
+*/
 ErrorStatus run_instructions()
 {
-    // @TODO: runs the instructions
-    // stub
-    /*
-        FETCH - fetch the next instruction from memory
-        (DECODE)
-        EXECUTE - execute the instruction
-        (WRITE BACK)
-
-        bool is_halt = FALSE;
-        pc = 0x0000;
-        do
-        {
-            instruction = memory_get_next_instruction(&pc);
-            hardware_execute_instruction(&pc, &is_halt);
-            increment pc;
-        }
-        while (not is_halt)
-
-    */
-
     ErrorStatus status = ERR_ATTN;
-    // Instruction instruction = {};
+    Instruction* pc = NULL; // program counter
+    bool is_halt = FALSE;
 
-    Instruction* pc = NULL;
+    do
+    {
+        /* FETCH */
+        _get_instruction(&pc);
+        assert(NULL != pc);
 
-    /* FETCH */
-    pc = memory.ptr_text; // program counter
+        /* DECODE - done by type inference */
 
-    /* DECODE */
-    // done by type inference
+        /* EXECUTE */
+        status = hardware_execute_instruction(pc, &is_halt);
 
-    /* EXECUTE */
-    status = hardware_execute_instruction(pc);
+        /* WRITE BACK - done in EXECUTE */
+    }
+    while (FALSE == is_halt && ERR_NONE == status);
 
-
-
-    return ERR_NONE;
+    return status;
 }
 
 void baby_vm_shutdown()
@@ -128,8 +127,7 @@ int main(int argc, char* argv[])
     LOG_COMP(MAX(argc-2, 0), args.len);
 #endif // DEBUG_ON
 
-    // @TODO: to be implemented
-    ErrorStatus status = ERR_NONE;
+    ErrorStatus status = ERR_ATTN;
 
     status = baby_vm_init();
     if (ERR_NONE != status)
