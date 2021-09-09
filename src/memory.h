@@ -9,7 +9,7 @@
 #include "types_private.h"
 
 #define TEXT_REGION_START   0x0003 // first 3 slots are reserved
-#define TEXT_REGION_LAST    0x0fff // @TODO: revisit this!
+#define TEXT_REGION_LAST    0x0fff
 #define TEXT_REGION_SIZE    ( TEXT_REGION_LAST - TEXT_REGION_START )
 #define DATA_REGION_START   0x1000
 #define DATA_REGION_LAST    0x13ff
@@ -17,6 +17,8 @@
 
 #define STACK_REGION_START  0xfbff
 #define HEAP_REGION_START   0x1400
+
+#define HALT                TEXT_REGION_LAST
 
 // memory model
 /* 65535 (2^16) slot * 2 sizeof(uint16_t) = 131072 bytes ~ 131 KB
@@ -95,8 +97,9 @@ typedef struct
 /* memeory functions */
 ErrorStatus memory_init(Memory* memory);
 ErrorStatus memory_load_instructions(FILE* ptr_file, Arguments* ptr_arg);
-ErrorStatus memory_read(uint16_t addr, uint16_t* ptr_val);
-ErrorStatus memory_write(uint16_t addr, uint16_t value);
+ErrorStatus memory_read(uint16_t addr, int16_t* ptr_val);
+ErrorStatus memory_write(uint16_t addr, int16_t value);
+ErrorStatus memory_set_branch_addr(Instruction* pc, Memory* memory);
 void memory_shutdown(void);
 
 #endif // MEM_H

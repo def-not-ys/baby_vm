@@ -58,7 +58,7 @@ static void _get_instruction(Instruction** pc)
 */
 ErrorStatus run_instructions()
 {
-    ErrorStatus status = ERR_ATTN;
+    ErrorStatus status = ERR_NONE;
     Instruction* pc = NULL; // program counter
     bool is_halt = FALSE;
 
@@ -71,7 +71,7 @@ ErrorStatus run_instructions()
         /* DECODE - done by type inference */
 
         /* EXECUTE */
-        status = hardware_execute_instruction(pc, &is_halt);
+        status |= hardware_execute_instruction(pc, &is_halt);
 
         /* WRITE BACK - done in EXECUTE */
     }

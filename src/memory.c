@@ -100,7 +100,7 @@ ErrorStatus memory_load_instructions(FILE* ptr_file, Arguments* ptr_arg)
 /*
     read mem[addr] to *(p_val) and return the error status
 */
-ErrorStatus memory_read(uint16_t addr, uint16_t* ptr_val)
+ErrorStatus memory_read(uint16_t addr, int16_t* ptr_val)
 {
     assert(NULL != ptr_val);
     if (addr < 0x0000 || addr > UINT16_MAX)
@@ -111,7 +111,7 @@ ErrorStatus memory_read(uint16_t addr, uint16_t* ptr_val)
     }
     else
     {
-        *ptr_val = _memory[addr];
+        *ptr_val = (int16_t)_memory[addr];
         return ERR_NONE;
     }
 }
@@ -119,7 +119,7 @@ ErrorStatus memory_read(uint16_t addr, uint16_t* ptr_val)
 /*
     write value to mem[addr] and return the error status
 */
-ErrorStatus memory_write(uint16_t addr, uint16_t value)
+ErrorStatus memory_write(uint16_t addr, int16_t value)
 {
     if (addr < DATA_REGION_START || addr > STACK_REGION_START)
     {
@@ -128,10 +128,25 @@ ErrorStatus memory_write(uint16_t addr, uint16_t value)
     }
     else
     {
-        _memory[addr] = value;
+        _memory[addr] = (uint16_t)value;
         return ERR_NONE;
     }
 
+}
+
+/*
+    update memory.ptr_text to point to the branch address
+*/
+ErrorStatus memory_set_branch_addr(Instruction* pc, Memory* memory)
+{
+    uint16_t addr = pc->brch;
+    if (addr < TEXT_REGION_START || addr > TEXT_REGION_LAST)
+    {
+        LOG("invalid branching location");
+        return ERR_ATTN;
+    }
+    memory->ptr_text = (Instruction*)&_memory[addr];
+    return ERR_NONE;
 }
 
 void memory_shutdown()

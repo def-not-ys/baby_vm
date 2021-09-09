@@ -16,7 +16,7 @@ extern Hashmap hashmap;
 static void _examine_memory()
 {
     // examine _memory[]
-    printf("\n\n");
+    printf("\n\n----------------- MEMORY START --------------- \n\n");
     for (uint16_t i = 0; i < UINT16_MAX; i++ )
     {
         if (_memory[i] != 0)
@@ -24,6 +24,7 @@ static void _examine_memory()
             printf("_memory[0x%x] = 0x%x\n", i, _memory[i]);
         }
     }
+    printf("\n----------------- MEMORY END --------------- \n\n");
 }
 
 /*
@@ -46,35 +47,43 @@ static bool _is_label(char* token)
 static uint16_t _get_token_value(char* token)
 {
     assert(NULL != token);
-    char* endptr = NULL;
-    errno = 0;    /* To distinguish success/failure after call */
-    int value = strtol(token, &endptr, 10);
 
-    /* Check for various possible errors. */
+    // if token is a label, return label addrss
+    uint16_t value = hashmap.find(&hashmap, token);
 
-    if (errno != 0)
+    if (IDX_LAST == value)
     {
-        perror("strtol");
-        assert(0 && "error in getting token value");
-    }
+        char* endptr = NULL;
+        errno = 0;    /* To distinguish success/failure after call */
+        value = strtol(token, &endptr, 10);
 
-    if (endptr == token)
-    {
-        fprintf(stderr, "No digits were found\n");
-        assert(0 && "invalid token value");
-    }
+        /* Check for various possible errors. */
 
-    /* If we got here, strtol() successfully parsed a number. */
+        if (errno != 0)
+        {
+            perror("strtol");
+            assert(0 && "error in getting token value");
+        }
+
+        if (endptr == token)
+        {
+            fprintf(stderr, "No digits were found\n");
+            assert(0 && "invalid token value");
+        }
+
+        /* If we got here, strtol() successfully parsed a number. */
 #if DEBUG_ON
-    printf("strtol() returned %d\n", value);
+        printf("strtol() returned %d\n", value);
 #endif // DEBUG_ON
 
-    if (*endptr != '\0')
-    {
+        if (*endptr != '\0')
+        {
 #if DEBUG_ON
-        printf("Further characters after number: \"%s\"\n", endptr);
+            printf("Further characters after number: \"%s\"\n", endptr);
 #endif // DEBUG_ON
-        assert(0 && "invalid token value");
+            assert(0 && "invalid token value");
+        }
+
     }
 
     return value;

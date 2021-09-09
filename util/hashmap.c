@@ -100,7 +100,9 @@ static uint16_t _find(Hashmap* self, const char* label)
         if (NULL == self->_data[try].label || SLOT_UNUSED == self->_data[try].addr)
         {
             // label does not exist, stop looking
+#if DEBUG_MODE
             printf("label %s not found \n", label);
+#endif // DEBUG_MODE
             break;
         }
         else
@@ -151,7 +153,9 @@ static uint16_t _delete(Hashmap* self, const char* label)
         if (NULL == self->_data[try].label || SLOT_UNUSED == self->_data[try].addr)
         {
             // label does not exist, stop looking
+#if DEBUG_MODE
             printf("label %s not found \n", label);
+#endif // DEBUG_MODE
             break;
         }
         else
@@ -160,7 +164,9 @@ static uint16_t _delete(Hashmap* self, const char* label)
             if (0 == not_match)
             {
                 // found
+#if DEBUG_MODE
                 printf("deleting { label: %s:\taddr: 0x%x }\n", label, self->_data[try].addr);
+#endif // DEBUG_MODE
                 const char* tmp = self->_data[try].label;
                 free((void*)tmp);
                 addr = self->_data[try].addr;
@@ -200,6 +206,7 @@ static void _clear(Hashmap* self)
 
 void _print_hashmap(Hashmap* self)
 {
+    printf("\n\n----------------- HASHMAP START --------------- \n\n");
     for (uint16_t i = 0; i < HASH_TABLE_SIZE; i++)
     {
         if (self->_data[i].addr == SLOT_UNUSED)
@@ -215,6 +222,7 @@ void _print_hashmap(Hashmap* self)
             printf("hashmap[%d]\t { label: %s \t addr: 0x%x }\n", i, self->_data[i].label, self->_data[i].addr);
         }
     }
+    printf("\n\n----------------- HASHMAP END --------------- \n\n");
 }
 
 void hashmap_init(Hashmap* self, const Memory* ptr_memory)
