@@ -21,9 +21,16 @@ static void _memory_init_private(Memory* memory)
 ErrorStatus memory_init(Memory* memory)
 {
     text_pos = TEXT_REGION_START;
-    data_pos = DATA_REGION_START;
+    data_pos = DATA_REGION_USER;
     _memory_init_private(memory);
     hashmap_init(&hashmap, memory);
+
+    // initialze special values
+    _memory[DATA_ZERO] = 0;
+    _memory[DATA_ONE] = 1;
+    _memory[DATA_RESERVED_1] = 0xff;
+    _memory[DATA_RESERVED_2] = 0xff;
+
     return ERR_NONE;
 }
 

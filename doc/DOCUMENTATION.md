@@ -1,35 +1,161 @@
+# baby_vm Documentation (under construction)
+
+## TABLE OF CONTENTS
+- [baby_vm Documentation (under construction)](#baby_vm-documentation-under-construction)
+	- [TABLE OF CONTENTS](#table-of-contents)
+	- [HARDWARE](#hardware)
+	- [MEMORY](#memory)
+		- [TEXT REGION](#text-region)
+		- [DATA REGION](#data-region)
+		- [HEAP REGION (to be implemented)](#heap-region-to-be-implemented)
+		- [STACK REGION (to be implemented)](#stack-region-to-be-implemented)
+		- [RESERVED REGION](#reserved-region)
+			- [MEMORY HASHMAP MODEL](#memory-hashmap-model)
+	- [BABY_VM ARCHITECTURE (draft)](#baby_vm-architecture-draft)
+	- [PROGRAM](#program)
+	- [OTHER THOUGHTS](#other-thoughts)
+
 ## HARDWARE
 
-### MEMORY
+baby_vm's hardware is modeled as single threaded CPU that only executes one instruction `SUBLEQ` (reference: [ons-instruction set computer (OISC)](https://en.wikipedia.org/wiki/One-instruction_set_computer)).
 
-16 bit (for simplicity) - maybe 8 bit if pi cannot handle 16 bit
+```
+    Instruction subleq a, b, c
+        Mem[b] = Mem[b] - Mem[a]
+        if (Mem[b] ≤ 0)
+            goto c
+```
+Registers are not required for this hardware model, the instruction operates directly on memory.
 
-### RESGITERS
+## MEMORY
 
-The LC-3 has 10 total registers, each of which is 16 bits. Most of them are general purpose, but a few have designated roles.
+Memory is modeled using an `uint16_t` array. Index of the array is interpreted as baby_vm's memory address. For example, address 0x0010 maps to `_memory[0x0010]`.
 
-~~8 general purpose registers (R0-R7)~~
+```
+// src/memory.c
 
-1 program counter (PC) register
+static uint16_t _memory[UINT16_MAX]; // 65535 (2^16) addressable location
+```
 
-1 condition flags (COND) register
+Referenced by the C program memory layout, baby_vm's memory layout is inllusrated below (NOT TO SCALE)
+```
+// src/memory.h
 
-### INSTRUCTION SET
+    0xffff   +----------+
+             | Reserved |   1024 bytes
+             |          |
+    0xfbff   +----------+
+             |          |
+             |  Stack   |
+             |          |
+             +----+-----+
+             |    |     |
+             |    v     |
+             |          |
+             |    ^     |
+             |    |     |
+             +----+-----+
+             |   Heap   |
+             |          |
+    0x1400   +----------+
+             |   Data   |   1024 bytes
+             |          |
+    0x1000   +----------+
+             |          |
+             |   Text   |
+             |          |
+    0x0000   +----------+
+```
 
-typical basic instructions includes:
+The `Memory` structure exposed to program to interact with memory is defined as:
+```
+// src/memory.h
 
-- load
-- store
-- add
-- bitwise and
-- bitwise not
-- branch
-- jump
-- ...
+typedef struct
+{
+	Data*           reserved;       // pointer to the reserved data region for hashmap
+	uint16_t        addr_stack;     // addr to the start of stack region
+	uint16_t        addr_heap;      // addr to the start of the heap region
+	uint16_t        addr_data;      // addr to the user data region
+	Instruction*    ptr_text;       // pointer to the text region
+} Memory;
 
-~~need to implement `HALT` as well ??~~
+```
 
-#### try one-instruction set computer
+### TEXT REGION
+
+Instructions from the assmebly files are loaded and stored in the text region of the memory map. The general format of the instruction is:
+```
+subleq a b c
+```
+where a, b , and c are memory address.
+
+Since `subleq` is the only opcode, the structure of instructions can be defined as:
+```
+// src/memory.h
+
+typedef struct
+{
+    //uint16_t      opcode; (omit)
+    uint16_t        src;
+    uint16_t        dest;
+    uint16_t        brch;
+} Instruction;
+```
+which adds up to be a 6-byte struct.
+
+The text region in memory is interpreted as an array of `Instruction`. The first slot (`_memory[0x0000] - _memory[0x0003]`) in the text region is reserved.
+
+### DATA REGION
+
+Initialized user data from the assembly files is stored in the data region of the memory map.
+
+The frist 4 slots (`_memory[0x1000] - _memory[0x1004]`) are reserved for special values that are used by the program. User data is stored in the rest of the data region.
+```
+_memory[0x1000] = 0x00 // ZERO
+_memory[0x1001] = 0x01 // ONE
+_memory[0x1002] = 0xff // RESERVED
+_memory[0x1003] = 0xff // RESERVED
+
+```
+
+### HEAP REGION (to be implemented)
+Memory region for dynamically allocated memory.
+
+### STACK REGION (to be implemented)
+Memory region for stack frame.
+
+### RESERVED REGION
+#### MEMORY HASHMAP MODEL
+
+Functions and data can be assigned unique labels for memory address look up. To faciliate the look up, baby_vm stores the memory address and its associate label in a `{ label : addr }` key : value pair.
+```
+// src/memory.h
+
+typedef struct
+{
+    const char*     label;
+    uint16_t        reserved;   // for alignment
+    uint16_t        addr;
+} Data;
+```
+
+`{ label : addr}` pairs are stored in a Hashmap which is an internal data structure of baby_vm's memory.
+```
+// util/hahsmap.h
+
+typedef struct _hashmap
+{
+    uint16_t        (*find)(struct _hashmap* self, const char* label);
+    HashmapStatus   (*insert)(struct _hashmap* self, const char* label, uint16_t addr);
+    uint16_t        (*delete)(struct _hashmap* self, const char* label);
+    void            (*clear)(struct _hashmap* self);
+    Data*           _data;
+} Hashmap;
+```
+This internal Hashmap is stored in the reserved region of the memory map.
+
+## BABY_VM ARCHITECTURE (draft)
 
 `SUBLEQ`
 
@@ -49,83 +175,21 @@ each \ _ _ \ = 2 bytes
 
 opcode addr.a addr.b addr.c
 
-~~HALT 	0x0000 - 2-byte instruction~~
+address 0x0fff reserved for HALT -> bytes reserved 0x0fff
 
-SUBLEQ 	0x4000 - 4-byte instruction
-
-**@TODO: memory need to be revisited may need more text space!**
-
-address 0x0fff reserved for HALT -> bytes reserved 0x0fff / 2 = 510 = 170 * 3 -> (OP) a b c 0 * 2 + 6 * 2 = 12 bytes instruction can be aligned
-
-
-
-##### some special values for branching
+some special values for branching
 + 	0
 + 	1
-### CONDITIONAL FLAGS
 
 
-Each CPU has a variety of condition flags to signal various situations. The LC-3 uses only 3 condition flags which indicate the sign of the previous calculation.
-
-
-```
-{Includes, 12}
-
-{Registers, 3}
-{Opcodes, 3}
-{Condition Flags, 3}
-```
-
-
-## MODELLING
-
-### MEMORY
-
-
-* text region for loading the instructions
-* user region for stack and data
-* reserved region for special values
-
-* program stack...?
-
-use HASHMAP to store label-address pair
-
-turn HASHMAP into an object???? ~~Polymorphism in C~~
-
-~~compile hashmap as so to link at rt ???~~
-
-
-originally memory is modelled as `uint16_t memory[UINT16_MAX]`. may want to turn the array into struct/union for better data type access.
-as data is stored as 8-byte { label:addr } hashmap data and text is stored as plain 6 byte instruction (3 of 2-byte address).
-
-using struct to define pointer pointing to different area of memory array???
-
-
-potential memory struct
-```
-uint16_t _memory[UINT16_MAX]
-
-typedef struct
-{
-	Data* reserved[HASH_TABLE_SIZE]; // pointer to the reserved data region for hashmap
-	uint16_t* ptr_stack; // pointer to the start of stack region
-	uint16_t* ptr_heap; // pointer to the start of the heap region
-	uint16_t* ptr_data; // pointer to the user data region
-	Instruction* ptr_text; // pointer to the text region
-
-} memory;
-
-```
-
-### PROGRAM
+## PROGRAM
 
 1. load and process read file of assembly instructions (.txt file)
 	- process labels (where branch can jump to)
 	- save labels in memory
 	- set the start point to the start of the instructions
 	- mark the end of the instructions
-2. process instructions (while `running`)
+2. process instructions
 
 
 ## OTHER THOUGHTS
-* consider running automate end to end test .

@@ -12,8 +12,14 @@
 #define TEXT_REGION_LAST    0x0fff
 #define TEXT_REGION_SIZE    ( TEXT_REGION_LAST - TEXT_REGION_START )
 #define DATA_REGION_START   0x1000
+#define DATA_REGION_USER    0x1004 // first 4 data slots are reserved for special value
 #define DATA_REGION_LAST    0x13ff
 #define DATA_REGION_SIZE    ( DATA_REGION_LAST - DATA_REGION_START )
+
+#define DATA_ZERO           0x1000
+#define DATA_ONE            0x1001
+#define DATA_RESERVED_1     0x1002
+#define DATA_RESERVED_2     0x1003
 
 #define STACK_REGION_START  0xfbff
 #define HEAP_REGION_START   0x1400

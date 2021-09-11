@@ -1,6 +1,16 @@
 # baby_vm
 baby_vm is a virtual machine (VM) that implements [ons-instruction set computer (OISC)](https://en.wikipedia.org/wiki/One-instruction_set_computer).
 
+**baby_vm is still under construction. The to-dos are listed below:**
+
+## TO-DO
+- [ ] add `Dockerfile` and complete the *How to run* section
+- [ ] supply simple assembly program file for testing
+- [ ] implement stack memory support
+- [ ] implement heap memory support
+- [ ] implement syscall assmebly support
+- [ ] complete the documentation
+
 ## General information
 Inspired by [this tutorial](https://justinmeiners.github.io/lc3-vm/) for writing your own vm, I got the idea of writing a simple baby vm that only runs one instruction and see how far I can get.
 
@@ -20,7 +30,7 @@ All design deatils are documented in `/doc/DOCUMENTATION.md`.
 
 This project is for fun and educational purpose, not meant to be useful. :)
 
-## How to run
+## How to run (under construction)
 
 By the time this is publish, I should have dockerize `baby_vm`. So the following steps should get `baby_vm` up and running:
 
@@ -41,3 +51,5 @@ By the time this is publish, I should have dockerize `baby_vm`. So the following
 5) watch `baby_vm` run :)
 
 ## Anything else?
+
+contributions welcome :)
