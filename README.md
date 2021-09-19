@@ -9,7 +9,7 @@ baby_vm is a virtual machine (VM) that implements [ons-instruction set computer 
 - [ ] implement stack memory support
 - [ ] implement heap memory support
 - [ ] implement syscall assmebly support
-- [ ] complete the documentation
+- [ ] keep updating the documentation
 
 ## General information
 Inspired by [this tutorial](https://justinmeiners.github.io/lc3-vm/) for writing your own vm, I got the idea of writing a simple baby vm that only runs one instruction and see how far I can get.
