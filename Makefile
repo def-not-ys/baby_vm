@@ -1,8 +1,8 @@
 CC=clang
 CFLAGS=-I$(DIR) -g
 DIR=./src
-SRCS=$(DIR)/baby_vm.c $(DIR)/memory.c $(DIR)/hardware.c util/hashmap.c
-DEPS=$(DIR)/*.h util/*.h
+SRCS=$(DIR)/baby_vm.c $(DIR)/memory.c $(DIR)/hardware.c ./util/hashmap.c
+DEPS=$(DIR)/*.h ./util/*.h
 OBJS=*.o
 
 baby_vm: $(OBJS)

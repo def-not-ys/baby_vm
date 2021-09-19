@@ -9,7 +9,7 @@
 #include "types_private.h"
 #include "memory.h"
 
-Memory memory;
+extern Memory memory;
 
 // hardware model
 ErrorStatus hardware_init();

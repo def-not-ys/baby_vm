@@ -1,6 +1,8 @@
 #include "memory.h"
 #include "../util/hashmap.h"
 
+Memory memory;
+
 static uint16_t _memory[UINT16_MAX];
 static int text_pos; // available text region slot
 static int data_pos; // available data region slot
