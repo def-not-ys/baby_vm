@@ -1,5 +1,5 @@
 # baby_vm
-baby_vm is a virtual machine (VM) that implements [ons-instruction set computer (OISC)](https://en.wikipedia.org/wiki/One-instruction_set_computer).
+baby_vm is a virtual machine (VM) that implements [one-instruction set computer (OISC)](https://en.wikipedia.org/wiki/One-instruction_set_computer).
 
 **baby_vm is still under construction. The to-dos are listed below:**
 
