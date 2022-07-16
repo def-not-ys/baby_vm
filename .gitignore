@@ -4,3 +4,5 @@
 baby_vm
 hashmap
 .vscode
+*.log
+TAGS
