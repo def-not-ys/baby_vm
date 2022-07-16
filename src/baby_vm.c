@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
         if (strlen(argv[1]) >= MAX_BUFFER_LEN)
         {
             // for simplicity. do not support dynamically allocate long string
-            LOG("argument too long. exceeds maximum argument length. exiting grafaully...");
+            LOG("argument too long. exceeds maximum argument length. exiting gracefully...");
             exit(EXIT_FAILURE);
         }
 
@@ -132,14 +132,14 @@ int main(int argc, char* argv[])
     status = baby_vm_init();
     if (ERR_NONE != status)
     {
-        LOG("failed to initialize baby vm. exiting grafaully...");
+        LOG("failed to initialize baby vm. exiting gracefully...");
         exit(EXIT_FAILURE);
     }
 
     status = load_instructions(&buffer, &args);
     if (ERR_NONE != status)
     {
-        LOG("failed to load instructions. exiting grafaully...");
+        LOG("failed to load instructions. exiting gracefully...");
         baby_vm_shutdown();
         exit(EXIT_FAILURE);
     }
@@ -147,7 +147,7 @@ int main(int argc, char* argv[])
     status = run_instructions();
     if (ERR_NONE != status)
     {
-        LOG("failed to run instructions. exiting grafaully...");
+        LOG("failed to run instructions. exiting gracefully...");
         baby_vm_shutdown();
         exit(EXIT_FAILURE);
     }
