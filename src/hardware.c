@@ -38,7 +38,7 @@ static ErrorStatus subleq(Instruction* ins, bool* should_branch)
 }
 
 // process instruction
-ErrorStatus hardware_execute_instruction(Instruction* pc, bool* is_halt)
+ErrorStatus hardware_execute_instruction(Instruction* pc, bool* is_halt, int16_t* rv)
 {
     ErrorStatus status = ERR_NONE;
     bool should_branch = FALSE;
@@ -53,6 +53,8 @@ ErrorStatus hardware_execute_instruction(Instruction* pc, bool* is_halt)
         if (HALT == pc->brch)
         {
             *is_halt = TRUE;
+            // set return value
+            status |= memory_read(DATA_RV, rv);
         }
     }
     return status;

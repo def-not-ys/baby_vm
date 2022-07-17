@@ -31,7 +31,7 @@ ErrorStatus memory_init(Memory* memory)
     _memory[DATA_ZERO] = 0;
     _memory[DATA_ONE] = 1;
     _memory[DATA_RESERVED_1] = 0xff;
-    _memory[DATA_RESERVED_2] = 0xff;
+    _memory[DATA_RV] = 0;
 
     return ERR_NONE;
 }

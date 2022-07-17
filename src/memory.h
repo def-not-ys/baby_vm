@@ -19,7 +19,7 @@
 #define DATA_ZERO           0x1000
 #define DATA_ONE            0x1001
 #define DATA_RESERVED_1     0x1002
-#define DATA_RESERVED_2     0x1003
+#define DATA_RV             0x1003
 
 #define STACK_REGION_START  0xfbff
 #define HEAP_REGION_START   0x1400

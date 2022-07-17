@@ -116,7 +116,7 @@ The frist 4 slots (`_memory[0x1000] - _memory[0x1004]`) are reserved for special
 _memory[0x1000] = 0x00 // ZERO
 _memory[0x1001] = 0x01 // ONE
 _memory[0x1002] = 0xff // RESERVED
-_memory[0x1003] = 0xff // RESERVED
+_memory[0x1003] = 0xff // RETURN VALUE
 
 ```
 

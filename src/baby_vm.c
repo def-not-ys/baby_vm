@@ -56,7 +56,7 @@ static void _get_instruction(Instruction** pc)
     EXECUTE - execute the instruction
     (WRITE BACK)
 */
-ErrorStatus run_instructions()
+ErrorStatus run_instructions(int16_t* rv)
 {
     ErrorStatus status = ERR_NONE;
     Instruction* pc = NULL; // program counter
@@ -71,7 +71,7 @@ ErrorStatus run_instructions()
         /* DECODE - done by type inference */
 
         /* EXECUTE */
-        status |= hardware_execute_instruction(pc, &is_halt);
+        status |= hardware_execute_instruction(pc, &is_halt, rv);
 
         /* WRITE BACK - done in EXECUTE */
     }
@@ -128,6 +128,7 @@ int main(int argc, char* argv[])
 #endif // DEBUG_ON
 
     ErrorStatus status = ERR_ATTN;
+    int16_t rv = 0;
 
     status = baby_vm_init();
     if (ERR_NONE != status)
@@ -144,13 +145,17 @@ int main(int argc, char* argv[])
         exit(EXIT_FAILURE);
     }
 
-    status = run_instructions();
+    status = run_instructions(&rv);
     if (ERR_NONE != status)
     {
         LOG("failed to run instructions. exiting gracefully...");
         baby_vm_shutdown();
         exit(EXIT_FAILURE);
     }
+
+    // @TODO: need a better way to handle return value.
+    // display return value
+    printf("\n%d\n", rv);
 
     baby_vm_shutdown();
 
