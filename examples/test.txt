@@ -1,10 +1,6 @@
 section .text
-_start: subleq 4096 4097 6
-        subleq 4098 4096 6
-label:  
-        subleq 4099 4096 6
-        subleq 4096 4098 4095
-        #halt    # this is a test comment
+_start: subleq 4101 4099 6          # rv = 0 - mem[0x1005] = 0 - (-99) = 99
+        subleq 4096 4096 4095       # goto halt
 
 section .data
         Z: 0

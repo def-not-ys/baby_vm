@@ -1,0 +1,14 @@
+section .text
+_start: subleq 4096 4097 6
+        subleq 4098 4096 6
+label:  
+        subleq 4099 4096 6
+        subleq 4096 4098 4095
+        #halt    # this is a test comment
+
+section .data
+        Z: 0
+        Negative: -99
+                  -5
+                  -6
+                  0

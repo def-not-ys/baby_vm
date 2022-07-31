@@ -11,7 +11,7 @@
 #define MIN(x, y)                   ( x < y ? x : y)
 #define MAX(x, y)                   ( x > y ? x : y)
 
-#define DEBUG_ON                    0
+#define DEBUG_ON                    1
 
 /*  general */
 typedef enum
