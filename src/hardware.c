@@ -37,6 +37,16 @@ static ErrorStatus subleq(Instruction* ins, bool* should_branch)
     return status;
 }
 
+// decoded instruction
+void hardware_decode_instruction(Instruction* pc)
+{
+    // offset data read memory address to data region
+    pc->src += DATA_REGION_START;
+    pc->dest += DATA_REGION_START;
+
+    // brch address is in text region, no decode required.
+}
+
 // process instruction
 ErrorStatus hardware_execute_instruction(Instruction* pc, bool* is_halt, int16_t* rv)
 {

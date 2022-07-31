@@ -13,6 +13,7 @@ extern Memory memory;
 
 // hardware model
 ErrorStatus hardware_init();
+void hardware_decode_instruction(Instruction* pc);
 ErrorStatus hardware_execute_instruction(Instruction* pc, bool* is_halt, int16_t* rv);
 void hardware_shutdown();
 

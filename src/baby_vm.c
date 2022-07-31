@@ -69,6 +69,7 @@ ErrorStatus run_instructions(int16_t* rv)
         assert(NULL != pc);
 
         /* DECODE - done by type inference */
+        hardware_decode_instruction(pc);
 
         /* EXECUTE */
         status |= hardware_execute_instruction(pc, &is_halt, rv);
