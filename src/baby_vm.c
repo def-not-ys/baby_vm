@@ -88,6 +88,40 @@ void baby_vm_shutdown()
 }
 
 // process model
+int16_t process(Arguments* args, char** buffer)
+{
+
+    ErrorStatus status = ERR_ATTN;
+    int16_t rv = 0;
+
+    status = baby_vm_init();
+    if (ERR_NONE != status)
+        {
+            LOG("failed to initialize baby vm. exiting gracefully...");
+            exit(EXIT_FAILURE);
+        }
+
+    status = load_instructions(buffer, args);
+    if (ERR_NONE != status)
+        {
+            LOG("failed to load instructions. exiting gracefully...");
+            baby_vm_shutdown();
+            exit(EXIT_FAILURE);
+        }
+
+    status = run_instructions(&rv);
+    if (ERR_NONE != status)
+        {
+            LOG("failed to run instructions. exiting gracefully...");
+            baby_vm_shutdown();
+            exit(EXIT_FAILURE);
+        }
+
+    baby_vm_shutdown();
+
+    return rv;
+}
+
 int main(int argc, char* argv[])
 {
     char* buffer = NULL;
@@ -128,37 +162,11 @@ int main(int argc, char* argv[])
     LOG_COMP(MAX(argc-2, 0), args.len);
 #endif // DEBUG_ON
 
-    ErrorStatus status = ERR_ATTN;
-    int16_t rv = 0;
-
-    status = baby_vm_init();
-    if (ERR_NONE != status)
-    {
-        LOG("failed to initialize baby vm. exiting gracefully...");
-        exit(EXIT_FAILURE);
-    }
-
-    status = load_instructions(&buffer, &args);
-    if (ERR_NONE != status)
-    {
-        LOG("failed to load instructions. exiting gracefully...");
-        baby_vm_shutdown();
-        exit(EXIT_FAILURE);
-    }
-
-    status = run_instructions(&rv);
-    if (ERR_NONE != status)
-    {
-        LOG("failed to run instructions. exiting gracefully...");
-        baby_vm_shutdown();
-        exit(EXIT_FAILURE);
-    }
+    int16_t rv = process(&args, &buffer);
 
     // @TODO: need a better way to handle return value.
     // display return value
     printf("\n%d\n", rv);
-
-    baby_vm_shutdown();
 
     LOG("\nshutting down...\n");
 
