@@ -4,12 +4,31 @@ baby_vm is a virtual machine (VM) that implements [one-instruction set computer 
 **baby_vm is still under construction. The to-dos are listed below:**
 
 ## TO-DO
+### Features 
+#### Execution
+- [x] Add return value address
+- [x] add capability to display return value
+#### Add compiler in racket
+- [ ] define bnf of the input language
+    - refer to simple math-lan in 311
+- [ ] design intermediate languages
+- [ ] design compiler
+### General
 - [x] add `Dockerfile` and complete the *How to run* section
-- [ ] supply simple assembly program file for testing
+- [x] abstraction for memory address - added decode layer to turn relative index to memory data region address
+- [ ] add support for flags 
 - [ ] implement stack memory support
 - [ ] implement heap memory support
 - [ ] implement syscall assmebly support
 - [ ] keep updating the documentation
+### Testing 
+- [ ] supply simple assembly program file for testing
+- [ ] Add test suite to test machine functionality
+- [ ] convert simple c program to one-line instruction assembly code
+    - maybe simple additions 
+- [ ] test converted assembly code
+- [?] add testing input example to print "hello world" - ? this requires IO capacity? 
+
 
 ## General information
 Inspired by [this tutorial](https://justinmeiners.github.io/lc3-vm/) for writing your own vm, I got the idea of writing a simple baby vm that only runs one instruction and see how far I can get.

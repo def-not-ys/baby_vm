@@ -116,7 +116,7 @@ The frist 4 slots (`_memory[0x1000] - _memory[0x1004]`) are reserved for special
 _memory[0x1000] = 0x00 // ZERO
 _memory[0x1001] = 0x01 // ONE
 _memory[0x1002] = 0xff // RESERVED
-_memory[0x1003] = 0xff // RETURN VALUE
+_memory[0x1003] = 0x00 // RETURN VALUE
 
 ```
 
@@ -172,8 +172,22 @@ baby_vm takes assembly instructions in `.txt.` file as input, when reading the f
   loop:
     (program text)
  ```
+
 2. Process instruction in memory
 - each instruction is exucuted in a serial fashion (concurrent process is not supported)
+- decode layer is added to convery relative index to the memory address in data region. e.g.
+    ```
+    subleq 5 10 4095
+    ```
+
+is decoded to:
+
+    ```
+    subleq mem[0x1005] mem[0x100a] 0x0fff # mem[0x100a] = mem[0x100a] - mem[0x1005] halt if mem[0x100a] <= 0 
+    ```
+
+3. Return value in specified memory address
+- currently return value is stored in `0x1003`
 
 ## OTHER THOUGHTS
 - Error handling and recovery
