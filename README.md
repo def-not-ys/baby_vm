@@ -22,8 +22,8 @@ baby_vm is a virtual machine (VM) that implements [one-instruction set computer 
 - [ ] implement syscall assmebly support
 - [ ] keep updating the documentation
 ### Testing 
-- [ ] supply simple assembly program file for testing
-- [ ] Add test suite to test machine functionality
+- [x] supply simple assembly program file for testing
+- [x] Add test suite to test machine functionality
 - [ ] convert simple c program to one-line instruction assembly code
     - maybe simple additions 
 - [ ] test converted assembly code
