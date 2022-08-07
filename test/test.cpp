@@ -7,13 +7,6 @@ extern "C" {
 
 /*
   test plan:
-  1. normal flow
-     rv == 0
-     return error status == status ok
-  2. rv test
-     set rv to x
-     assert rv == x
-     return error status == status ok
   3. label test
      set label for something (maybe a loop)
      test rv == x
@@ -24,7 +17,18 @@ TEST_CASE( "Normal startup/shutdown flow", "[baby_vm]" ) {
 
     Arguments args = {0};
     char* test_file = "tests/normal-flow.txt";
+    int expected = 0;
 
     int16_t rv = process(&args, &test_file);
-    REQUIRE( rv == 0 );
+    REQUIRE( rv == expected );
+}
+
+TEST_CASE( "Set return value flow", "[baby_vm]" ) {
+
+    Arguments args = {0};
+    char* test_file = "tests/set-rv.txt";
+    int expected = 102;
+
+    int16_t rv = process(&args, &test_file);
+    REQUIRE( rv == expected );
 }
