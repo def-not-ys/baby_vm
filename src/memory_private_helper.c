@@ -30,7 +30,7 @@ static void _examine_memory()
 /*
  * checks if a token is label (ends with ':')
  */
-static bool _is_label(char* token)
+static boolean _is_label(char* token)
 {
     assert(NULL != token && "invalid null token");
     int len = strlen(token);

@@ -6,3 +6,5 @@ hashmap
 .vscode
 *.log
 TAGS
+test/test
+*.dSYM/

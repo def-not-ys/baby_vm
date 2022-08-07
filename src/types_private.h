@@ -11,14 +11,13 @@
 #define MIN(x, y)                   ( x < y ? x : y)
 #define MAX(x, y)                   ( x > y ? x : y)
 
-#define DEBUG_ON                    1
+#define DEBUG_ON                    0
 
 /*  general */
-typedef enum
-{
+typedef enum {
     FALSE,
     TRUE
-} bool;
+} boolean;
 
 typedef enum
 {

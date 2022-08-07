@@ -1,7 +1,7 @@
 CC=clang
-CFLAGS=-I$(DIR) -g
+CFLAGS=-I$(DIR) -Wall -g
 DIR=./src
-SRCS=$(DIR)/baby_vm.c $(DIR)/memory.c $(DIR)/hardware.c ./util/hashmap.c
+SRCS=$(DIR)/baby_vm.c $(DIR)/memory.c $(DIR)/hardware.c $(DIR)/main.c ./util/hashmap.c
 DEPS=$(DIR)/*.h ./util/*.h
 OBJS=*.o
 
@@ -14,4 +14,4 @@ $(OBJS): $(DEPS) $(SRCS)
 .PHONY: clean
 
 clean:
-	rm -f *.o baby_vm
+	rm -f -r *.o baby_vm *.dSYM

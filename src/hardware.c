@@ -20,7 +20,7 @@ void hardware_shutdown()
         if (Mem[b] ≤ 0)
             goto c
 */
-static ErrorStatus subleq(Instruction* ins, bool* should_branch)
+static ErrorStatus subleq(Instruction* ins, boolean* should_branch)
 {
     ErrorStatus status = ERR_NONE;
     int16_t a, b, tmp;
@@ -48,10 +48,10 @@ void hardware_decode_instruction(Instruction* pc)
 }
 
 // process instruction
-ErrorStatus hardware_execute_instruction(Instruction* pc, bool* is_halt, int16_t* rv)
+ErrorStatus hardware_execute_instruction(Instruction* pc, boolean* is_halt, int16_t* rv)
 {
     ErrorStatus status = ERR_NONE;
-    bool should_branch = FALSE;
+    boolean should_branch = FALSE;
 
     status |= subleq(pc, &should_branch);
 
