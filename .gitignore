@@ -7,3 +7,4 @@ hashmap
 *.log
 TAGS
 test/test
+*.dSYM/
