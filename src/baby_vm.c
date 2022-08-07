@@ -60,7 +60,7 @@ ErrorStatus run_instructions(int16_t* rv)
 {
     ErrorStatus status = ERR_NONE;
     Instruction* pc = NULL; // program counter
-    bool is_halt = FALSE;
+    boolean is_halt = FALSE;
 
     do
     {

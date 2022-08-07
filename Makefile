@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=-I$(DIR) -g
+CFLAGS=-I$(DIR) -Wall -g
 DIR=./src
 SRCS=$(DIR)/baby_vm.c $(DIR)/memory.c $(DIR)/hardware.c ./util/hashmap.c
 DEPS=$(DIR)/*.h ./util/*.h
