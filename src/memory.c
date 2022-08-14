@@ -44,8 +44,9 @@ static ErrorStatus _memory_process_line(char* line, Section* section)
     ErrorStatus status = ERR_NONE;
 
     // process instruction
+    char delimit[]=" \t\r\n\v\f";
     char* remaining_line = NULL;
-    char* token = strtok_r(line, " ", &remaining_line);
+    char* token = strtok_r(line, delimit, &remaining_line);
 
 #if DEBUG_ON
     printf("token: [ %s ]\n", token);
@@ -86,7 +87,7 @@ ErrorStatus memory_load_instructions(FILE* ptr_file, Arguments* ptr_arg)
     {
         // omit comment start with #
         char* line = strtok(buf, "#");
-        line = strtok(line, "\r\n");
+        line = strtok(line, "\t\r\n");
 #if DEBUG_ON
         printf("after split by #: [ %s ]\n", line);
 #endif // DEBUG_ON
