@@ -1,6 +1,6 @@
 #include "baby_vm.h"
 
-static char* fake_path = "examples/test.txt";
+static char* fake_path = "test/tests/normal-flow.txt";
 static char* fake_args = "fake args";
 
 void wait_for_data(char** ptr_buf, Arguments* ptr_arg)
