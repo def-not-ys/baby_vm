@@ -72,15 +72,15 @@ static uint16_t _get_token_value(char* token)
         }
 
         /* If we got here, strtol() successfully parsed a number. */
-#if DEBUG_ON
-        printf("strtol() returned %d\n", value);
-#endif // DEBUG_ON
+        if (verbose_flg) {
+            printf("strtol() returned %d\n", value);
+        }
 
         if (*endptr != '\0')
         {
-#if DEBUG_ON
-            printf("Further characters after number: \"%s\"\n", endptr);
-#endif // DEBUG_ON
+            if (verbose_flg) {
+                printf("Further characters after number: \"%s\"\n", endptr);
+            }
             assert(0 && "invalid token value");
         }
 
@@ -116,9 +116,9 @@ static ErrorStatus _token_handler(char* token, Section* section)
     HashmapStatus _status = STATUS_OK;
     static int is_arg = 0;
 
-#if DEBUG_ON
-    printf("handling token [ %s ]\n", token);
-#endif // DEBUG_ON
+    if (verbose_flg) {
+        printf("handling token [ %s ]\n", token);
+    }
 
     switch (*section)
     {

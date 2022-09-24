@@ -48,9 +48,9 @@ static ErrorStatus _memory_process_line(char* line, Section* section)
     char* remaining_line = NULL;
     char* token = strtok_r(line, delimit, &remaining_line);
 
-#if DEBUG_ON
-    printf("token: [ %s ]\n", token);
-#endif // DEBUG_ON
+    if (verbose_flg) {
+        printf("token: [ %s ]\n", token);
+    }
 
     if (NULL != token)
     {
@@ -60,9 +60,9 @@ static ErrorStatus _memory_process_line(char* line, Section* section)
     while (NULL != token)
     {
         token = strtok_r(NULL, " ", &remaining_line);
-#if DEBUG_ON
-        printf("token: [ %s ]\n", token);
-#endif // DEBUG_ON
+        if (verbose_flg) {
+            printf("token: [ %s ]\n", token);
+        }
         if (NULL != token)
         {
             status |= _token_handler(token, section);
@@ -88,21 +88,21 @@ ErrorStatus memory_load_instructions(FILE* ptr_file, Arguments* ptr_arg)
         // omit comment start with #
         char* line = strtok(buf, "#");
         line = strtok(line, "\t\r\n");
-#if DEBUG_ON
-        printf("after split by #: [ %s ]\n", line);
-#endif // DEBUG_ON
+        if (verbose_flg) {
+            printf("after split by #: [ %s ]\n", line);
+        }
         if (NULL != line)
         {
             status |= _memory_process_line(line, &section);
         }
     }
 
-#if DEBUG_ON
-    _examine_memory();
+    if (verbose_flg) {
+        _examine_memory();
 #if DEBUG_MODE
-    hashmap_test(&hashmap);
-#endif // DEBUGMODE
-#endif // DEBUG_ON
+        hashmap_test(&hashmap);
+#endif // DEBUGMODE 
+    }
 
     return status;
 }

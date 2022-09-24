@@ -6,6 +6,8 @@
 #include <string.h>
 #include <assert.h>
 
+extern int verbose_flg;
+
 #include "types_private.h"
 
 #define TEXT_REGION_START   0x0003 // first 3 slots are reserved

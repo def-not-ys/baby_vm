@@ -9,6 +9,7 @@
 #include "types_private.h"
 #include "memory.h"
 
+extern int verbose_flg;
 extern Memory memory;
 
 // hardware model
