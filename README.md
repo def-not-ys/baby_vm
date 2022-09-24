@@ -16,7 +16,7 @@ baby_vm is a virtual machine (VM) that implements [one-instruction set computer 
 ### General
 - [x] add `Dockerfile` and complete the *How to run* section
 - [x] abstraction for memory address - added decode layer to turn relative index to memory data region address
-- [ ] add support for flags 
+- [x] add support for flags 
 - [ ] implement stack memory support
 - [ ] implement heap memory support
 - [ ] implement syscall assmebly support
